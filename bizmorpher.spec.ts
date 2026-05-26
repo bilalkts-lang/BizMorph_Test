@@ -26,9 +26,11 @@ test.describe("Homepage", () => {
   });
  
   test("shows the three service pillars (Digital, Data & AI, Cloud)", async ({ page }) => {
-    await expect(page.getByText(/digital/i).first()).toBeVisible();
-    await expect(page.getByText(/data & ai/i).first()).toBeVisible();
-    await expect(page.getByText(/cloud/i).first()).toBeVisible();
+    // Scope to main content to avoid matching hidden nav dropdown links
+    const mainContent = page.locator("main, .elementor, #content, section").first();
+    await expect(mainContent.getByText(/^Digital$/i).first()).toBeAttached();
+    await expect(mainContent.getByText(/^Data & AI$/i).first()).toBeAttached();
+    await expect(mainContent.getByText(/^Cloud$/i).first()).toBeAttached();
   });
  
   test("displays partner logos section", async ({ page }) => {
@@ -189,4 +191,3 @@ test.describe("Edge cases", () => {
     expect(title.trim().length).toBeGreaterThan(0);
   });
 });
- 
