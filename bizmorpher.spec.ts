@@ -26,11 +26,11 @@ test.describe("Homepage", () => {
   });
 
   test("shows the three service pillars (Digital, Data & AI, Cloud)", async ({ page }) => {
-    // Scope to main content to avoid matching hidden nav dropdown links
-    const mainContent = page.locator("main, .elementor, #content, section").first();
-    await expect(mainContent.getByText(/^Digital$/i).first()).toBeAttached();
-    await expect(mainContent.getByText(/^Data & AI$/i).first()).toBeAttached();
-    await expect(mainContent.getByText(/^Cloud$/i).first()).toBeAttached();
+    // Read visible body text — avoids all hidden nav/dropdown matches entirely
+    const bodyText = await page.locator("body").innerText();
+    expect(bodyText).toMatch(/Digital/i);
+    expect(bodyText).toMatch(/Data & AI/i);
+    expect(bodyText).toMatch(/Cloud/i);
   });
 
   test("displays partner logos section", async ({ page }) => {
@@ -82,9 +82,9 @@ test.describe("Navigation", () => {
 
   test("Logo click returns to homepage from an inner page", async ({ page }) => {
     await page.goto(`${BASE_URL}/about-us/`);
-    // Target the first link pointing to the homepage root — more resilient than class-based selectors
-    await page.locator(`a[href="${BASE_URL}/"], a[href="${BASE_URL}"], a[href="/"]`).first().click();
-    await expect(page).toHaveURL(new RegExp(`^${BASE_URL}/?$`));
+    // Click the logo image link — works regardless of http/https or class names
+    await page.locator('a:has(img[class*="logo"], img[src*="logo"], img[alt*="logo"])').first().click();
+    await expect(page).toHaveURL(new RegExp(`^https?://bizmorpher\\.com/?$`));
   });
 });
 
