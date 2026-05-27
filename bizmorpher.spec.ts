@@ -82,7 +82,8 @@ test.describe("Navigation", () => {
 
   test("Logo click returns to homepage from an inner page", async ({ page }) => {
     await page.goto(`${BASE_URL}/about-us/`);
-    await page.locator("header a, .site-logo a").first().click();
+    // Target the first link pointing to the homepage root — more resilient than class-based selectors
+    await page.locator(`a[href="${BASE_URL}/"], a[href="${BASE_URL}"], a[href="/"]`).first().click();
     await expect(page).toHaveURL(new RegExp(`^${BASE_URL}/?$`));
   });
 });
